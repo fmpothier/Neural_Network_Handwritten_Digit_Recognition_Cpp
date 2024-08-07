@@ -41,6 +41,18 @@ std::vector<std::vector<unsigned char>> read_images(const std::string& file_name
 	//vector to store the images and pixal values in
 	std::vector<std::vector<unsigned char>> images;
 	
+	//loop over all images
+	for(int i = 0; i < imagesNum_little; ++i){
+		//create a vector to wholed pixals for each image
+		std::vector<unsigned char> img(rowNum_little * colsNum_little);
+
+		//read pixel values for each image into img vector
+		file.read((char*)(img.data()), rowNum_little * colsNum_little);
+		
+		//add image to the back of the result vector
+		images.push_back(img);
+	}
+	
 	//close file
 	file.close();
 
@@ -49,7 +61,37 @@ std::vector<std::vector<unsigned char>> read_images(const std::string& file_name
 
 int main(){
 	
-	std::vector<std::vector<unsigned char>> image = read_images("images/train-images.idx3-ubyte");		
+	std::vector<std::vector<unsigned char>> image = read_images("images/train-images.idx3-ubyte");	
+	
+	//loop over images
+	for(int i = 0; i < 5/*(int)image.size()*/; ++i){
+		
+		//make sure the image is of size 28 by 28
+		if(image[i].size() != 784){
+			std::cerr << "Image " << i << " does not have 784 pixels." << std::endl;
+        		continue; // Skip this iteration if the image is not valid
+		}
+		
+	
+		//varble to count the rows and cols
+		int row = 0;
+		int cols = 0;
+		//loop over pixels
+		for(int j = 0; j < (int)image[i].size(); ++j){
+			
+			std::cout<<(int)image[i][j]<< " ";
+			
+			//increament colume counter
+			++cols;
+
+			//to keep track of rows
+			if(j%28 == 0 && j!=0){
+				++row;
+				cols = 0;
+				std::cout<<std::endl;
+			}	
+		}	
+	}	
 	
 	return 0;
 }
