@@ -2,6 +2,7 @@
 #include <opencv2/opencv.hpp>
 #include <fstream>
 #include <vector>
+#include <Eigen/Dense>
 
 //converts byte from big endian to little endian
 int convert_endian(char num[4]){
