@@ -1,0 +1,4 @@
+/home/fpothier/SENG475/project/cpp_project-nn_char_recognition_dm_fp/tmp/CMakeFiles/convert_images.dir
+/home/fpothier/SENG475/project/cpp_project-nn_char_recognition_dm_fp/tmp/CMakeFiles/num_recognizer.dir
+/home/fpothier/SENG475/project/cpp_project-nn_char_recognition_dm_fp/tmp/CMakeFiles/edit_cache.dir
+/home/fpothier/SENG475/project/cpp_project-nn_char_recognition_dm_fp/tmp/CMakeFiles/rebuild_cache.dir

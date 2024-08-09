@@ -16,6 +16,7 @@ include_directories(${OpenCV_INCLUDE_DIRS} ${EIGEN3_INCLUDE_DIR})
 
 #add the executable
 add_executable(convert_images app/convert_images.cpp)
+#add_executable(num_recognizer app/num_recognizer.cpp)
 
 #link librarys 
 target_link_libraries(convert_images ${OpenCV_LIBS} Eigen3::Eigen)

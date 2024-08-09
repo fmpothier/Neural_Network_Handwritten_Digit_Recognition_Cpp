@@ -1,0 +1,1 @@
+/home/frodo/public/ugls_lab-10.4.2/bin/c++ -rdynamic CMakeFiles/num_recognizer.dir/app/num_recognizer.cpp.o -o num_recognizer
