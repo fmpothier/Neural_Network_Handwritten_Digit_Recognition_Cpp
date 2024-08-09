@@ -49,7 +49,32 @@ namespace ann{
 		//then addeds the bias
 		//then calls the sigmoid function 
 		//resaltion in a vector of the next layers activation values
-		Vector feed_forward(const Vector& input);
+		Vector feed_forward(const Vector& input){
+			//we will need to figure out how we want to save or not save the 
+			//activations there are pro and cons to both, maybe for training we save them
+			//but for are final nn we dont becsaue it will take up a lot of extra memory
+			
+			//clear old activations so that we can replace with new 
+			//activations for each level of the NN
+			activations_.clear();
+
+			//first layer of activations 
+			activations_.push_back(input);
+			
+			//initialz output vector, (note this may not be the best way to do this)
+			Vector output = input;
+
+			//loop over each layer for the NN and conpute the new activations
+			for(size_t i = 0; i < weights_.size(); ++i){
+				
+				//calc the next activation layer values
+				output = sigmoid(weights_[i] * output + biases_[i]);
+				
+				//add it to the activation vector
+				activations_.push_back(output);
+			}
+			return output;
+		}
 		
 		//returns the current activations in the NN
 		//this might be unnescessary as i don't think we have to save the
