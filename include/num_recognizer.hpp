@@ -23,7 +23,14 @@ namespace ann{
 		
 		//the sigmoid function takens in a vector 
 		//and maps the input values to an output range between 0 and 1
-		Vector sigmoid(const Vector& x);
+		// sigmoid function = 1 / (1 + (e^-x))
+		//notes: .array() turns the eigen vactor in to an array type allowing
+		// elemnt-wise calucations to be done
+		// .exp() is also from the eigen liabry and it takes each elemnt in the array
+		// as an expoint to e
+		Vector sigmoid(const Vector& x){
+			return 1.0 / ( 1.0 + (( -x.array() ).exp() ) );
+		}
 		
 		//the feed_forward function takes in a input layer 
 		//mutiblys the weights and input layers together
@@ -36,13 +43,19 @@ namespace ann{
 		//this might be unnescessary as i don't think we have to save the
 		// activations but we might want to for understating what it happen in are NN
 		// but it dose make extra work that we dont really need to do
-		const std::vector<Vector>& get_activations() const;
+		const std::vector<Vector>& get_activations() const{
+			return activations_;
+		}
 		
 		//retruns the vector with the current matrix of weights on it
-		const std::vector<Matrix>& get_weights() const;
+		const std::vector<Matrix>& get_weights() const{
+			return weights_;
+		}
 		
 		//retunrs the Vector with the current vectors of biases
-		const std::vector<Vector>& get_biases() const;
+		const std::vector<Vector>& get_biases() const{
+			return biases_;
+		}
 
 	private:
 		std::vector<int> layers_;
