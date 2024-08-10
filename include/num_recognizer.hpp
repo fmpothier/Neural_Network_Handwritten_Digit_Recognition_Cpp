@@ -13,12 +13,12 @@ namespace ann{
 		using Vector = Eigen::VectorXd;
 		using Matrix = Eigen::MatrixXd;
 
-		//constucts a NN object
-		//takens in a vector with the sizes of each layer, this vectors size 
-		//equals the amont of layers that are in the NN
-		//creates n - 1 maticx for the weights and n - 1 vectors for the bias
-		//the matrix are of size row: lenght of prev layer, col: lenght of next layer
-		//the bias vectors are size of the lenght of the prev layer
+		// constructs a NN object
+		// takes in a vector with the sizes of each layer, this vector's size 
+		// equals the amount of layers that are in the NN
+		// creates n - 1 matrices for the weights, and n-1 vectors for the biases.
+		// the matrices are of size row: length of prev layer, col: length of next layer
+		// the bias vectors are size of the length of the prev layer
 		neural_network(const std::vector<int>& layers) : layers_(layers){
 			//get the amount of layers in the NN
 			int num_layers = layers.size();
