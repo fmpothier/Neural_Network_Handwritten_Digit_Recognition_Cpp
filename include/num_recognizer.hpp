@@ -1,81 +1,77 @@
 #ifndef NUM_RECOGNIZER_HPP
 #define NUM_RECOGNIZER_HPP
+
 #include <stdexcept>
-#include <iostream>
-#include <fstream>
-#include <opencv2/opencv.hpp>
 #include <vector>
 #include <Eigen/Dense>
+#include <iostream>
 
 namespace ann{
+
 	class neural_network{
 	public:
 		using Vector = Eigen::VectorXd;
 		using Matrix = Eigen::MatrixXd;
+		using size_type = std::size_t;
 
-		// constructs a NN object
-		// takes in a vector with the sizes of each layer, this vector's size 
-		// equals the amount of layers that are in the NN
-		// creates n - 1 matrices for the weights, and n-1 vectors for the biases.
-		// the matrices are of size row: length of prev layer, col: length of next layer
-		// the bias vectors are size of the length of the prev layer
-		neural_network(const std::vector<int>& layers) : layers_(layers){
-			//get the amount of layers in the NN
-			int num_layers = layers.size();
+		// Constructs a NN object.
+		// Takes in a vector of layer sizes. The size of the vector is the number of layers (n). 
+		// Creates n-1 matrices for the weights, and n-1 vectors for the biases.
+		// Weight matrix: number of rows = size of output vector.
+		// Number of columns = size of input vector.
+		// The bias vectors are size of the length of the prev layer.
+		neural_network(const std::vector<size_type>& layers) : layers_(layers){
 
-			//randomly grenerate the weights and bieses
-			for(int i = 0; i < num_layers - 1; ++i){
-				weights_.emplace_back(Matrix::Random(layers[i], layers[i - 1]));
-				biases_.emplace_back(Vector::Random(layers[i]));
-			}
-			
+			// Gets the amount of layers in the NN.
+			const size_type num_layers = layers.size();
+
+			// Randomly generate the weights and biases.
+			for(size_type i = 0; i < num_layers - 1; ++i){ 
+				weights_.emplace_back(Matrix::Random(layers.at(i+1), layers.at(i)));
+				biases_.push_back(Vector::Random(layers.at(i+1)));
+			} 
 		}
 		
-		//the sigmoid function takens in a vector 
-		//and maps the input values to an output range between 0 and 1
-		// sigmoid function = 1 / (1 + (e^-x))
+		// The sigmoid function takes in a vector 
+		// and maps the values to an range between 0 and 1.
+		// Sigmoid function = 1 / (1 + (e^-x))
 
-		//notes: .array() turns the eigen vactor in to an array type allowing
-		// elemnt-wise calucations to be done
-		// .exp() is also from the eigen liabry and it takes each elemnt in the array
-		// as an expoint to e	
-		//has not been tested yet
-		Vector sigmoid(const Vector& x){
-			return 1.0 / ( 1.0 + (( -x.array() ).exp() ) );
+		// Notes: .array() turns the input vector into an array type allowing
+		// element-wise calucations to be done.
+		// .exp() is also from the eigen library, and it takes each elemnet in the array
+		// and exponentiates it.
+		static Vector sigmoid(const Vector& x){
+			Vector sigmoid_x = -x;	
+			sigmoid_x = 1.0 / (1.0 + sigmoid_x.array().exp());
+			return sigmoid_x;
 		}
 		
-		//the feed_forward function takes in a input layer 
-		//mutiblys the weights and input layers together
-		//then addeds the bias
-		//then calls the sigmoid function 
-		//resaltion in a vector of the next layers activation values
+		// The feed_forward function takes in an input layer 
+		// mutiplies it by the weights, then adds the biases.
+		// Then it calls the sigmoid function on the result,
+		// resulting in a vector of the next layer's activation values.
 		Vector feed_forward(const Vector& input){
-			//we will need to figure out how we want to save or not save the 
-			//activations there are pro and cons to both, maybe for training we save them
-			//but for are final nn we dont becsaue it will take up a lot of extra memory
-			
-			//clear old activations so that we can replace with new 
-			//activations for each level of the NN
+			// Input is of size 784. Output is of size 10.
+			Vector output;
+
+			// Clear old activations so that we can replace with new 
+			// activations for each level of the NN
 			activations_.clear();
 
 			//first layer of activations 
 			activations_.push_back(input);
-			
-			//initialz output vector, (note this may not be the best way to do this)
-			Vector output = input;
 
-			//loop over each layer for the NN and conpute the new activations
-			for(size_t i = 0; i < weights_.size(); ++i){
-				
-				//calc the next activation layer values
-				output = sigmoid(weights_[i] * output + biases_[i]);
-				
-				//add it to the activation vector
-				activations_.push_back(output);
+			// This variable will hold our vector of node activations for forward
+			// propagation.
+			Vector cur_layer = input;
+			for(size_type index = 0; index < weights_.size(); ++index){	
+				cur_layer = sigmoid((weights_.at(index)*cur_layer) + biases_.at(index));
+				activations_.push_back(cur_layer);
 			}
+			output = cur_layer;
 			return output;
 		}
-		
+	
 		//returns the current activations in the NN
 		//this might be unnescessary as i don't think we have to save the
 		// activations but we might want to for understating what it happen in are NN
@@ -95,7 +91,7 @@ namespace ann{
 		}
 
 	private:
-		std::vector<int> layers_;
+		std::vector<size_type> layers_;
 		std::vector<Matrix> weights_;
 		std::vector<Vector> biases_;
 		

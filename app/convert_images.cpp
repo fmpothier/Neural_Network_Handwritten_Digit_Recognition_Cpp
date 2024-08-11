@@ -1,8 +1,12 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include <fstream>
+#include <filesystem>
 #include <vector>
 #include <Eigen/Dense>
+#include <string>
+
+namespace fs = std::filesystem;
 
 //converts byte from big endian to little endian
 int convert_endian(char num[4]){
@@ -94,45 +98,65 @@ int main(){
 	
 	std::vector<std::vector<unsigned char>> image = read_images("images/train-images.idx3-ubyte");	
 	std::vector<std::vector<unsigned char>> label = read_labels("images/train-labels.idx1-ubyte");
-	//view the images
-	cv::namedWindow("Image", cv::WINDOW_AUTOSIZE);
 
-	//loop over images
-	for(int i = 0; i < (int)image.size(); ++i){
+	// View the images
+	//cv::namedWindow("Image", cv::WINDOW_AUTOSIZE);
+
+	// Set file path
+	fs::path base_path = fs::current_path() / "images" / "training_data";
+
+	if(!fs::exists(base_path)){
+		fs::create_directories(base_path);
+	}
+
+	// Loop over images
+	for(size_t i = 0; i < image.size(); ++i){
 		
-		//create a temp image
+		// Create a temp image
 		cv::Mat tmp = cv::Mat::zeros(cv::Size(28, 28), CV_8UC1);
 		
-		//make sure the image is of size 28 by 28
+		
+		// Make sure the image is of size 28 by 28
 		if(image[i].size() != 784){
 			std::cerr << "Image " << i << " does not have 784 pixels." << std::endl;
         		continue; // Skip this iteration if the image is not valid
 		}
 		
 	
-		//varble to count the rows and cols
+		// Variable to count the rows and cols
 		int row = 0;
 		int cols = 0;
 
 		//loop over pixels
-		for(int j = 0; j < (int)image[i].size(); ++j){
-			//write image data to the tmp image
-			tmp.at<uchar>(cv::Point(cols, row)) = static_cast<uchar>(image[i][j]);
+		for(size_t j = 0; j < image[i].size(); ++j){
 
+			//write image data to the tmp image
+			int row = j / 28;
+			int col = j % 28;
+			tmp.at<uchar>(cv::Point(col, row)) = static_cast<uchar>(image[i][j]);
+
+			/*
 			//increament colume counter
 			++cols;
-
 			//to keep track of rows
 			if(j%28 == 0 && j != 0){
 				++row;
-				
 				//at the end of an image reset the colume counter
 				cols = 0;
-			}	
+			}	*/
 		}
-		std::cout<< "Label: " << (int)label[i][0]<<std::endl; 
-		cv::imshow("image", tmp);
-		cv::waitKey(0);		
+		
+		std::string label_str = std::to_string(static_cast<int>(label[i][0]));
+
+		std::string filename = label_str + "_t" + std::to_string(i + 1) + ".pgm";
+
+		fs::path full_path = base_path / filename;
+
+		cv::imwrite(full_path.string(), tmp);
+
+//		std::cout<< "Label: " << (int)label[i][0]<<std::endl; 
+//		cv::imshow("image", tmp);
+//		cv::waitKey(0);		
 	}	
 	
 	return 0;

@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
 project(Neural_Network LANGUAGES CXX)
 
 #
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 #find libraries
@@ -28,5 +28,5 @@ add_executable(convert_images app/convert_images.cpp)
 add_executable(num_recognizer app/num_recognizer.cpp include/num_recognizer.hpp)
 
 #linking the executables to the libraries
-target_link_libraries(num_recognizer lib_num_recognizer Eigen3::Eigen)
+target_link_libraries(num_recognizer lib_num_recognizer ${OpenCV_LIBS} Eigen3::Eigen)
 target_link_libraries(convert_images ${OpenCV_LIBS} Eigen3::Eigen)
