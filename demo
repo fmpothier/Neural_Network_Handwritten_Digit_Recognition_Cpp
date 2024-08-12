@@ -26,8 +26,4 @@ echo "Running num_recognizer on $IMAGE_FILE..."
 cd "$INSTALL_DIR"
 ./bin/num_recognizer "$IMAGE_FILE"
 
-# Display the selected image
-echo "Displaying the image: $IMAGE_FILE"
-display "$IMAGE_FILE"
-
 exit 0
