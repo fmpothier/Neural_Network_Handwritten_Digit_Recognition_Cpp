@@ -5,55 +5,55 @@
 #include <vector>
 #include <Eigen/Dense>
 #include <string>
+#include <stdexcept>
 
 namespace fs = std::filesystem;
 
-//converts byte from big endian to little endian
+// Converts byte from big endian to little endian
 int convert_endian(char num[4]){
 	
-	//convert to little endian by shifting bits to the left
+	// Convert to little endian by shifting bits to the left
 	int converted_num = (static_cast<unsigned char>(num[0]) << 24) | (static_cast<unsigned char>(num[1]) << 16) |
 			 (static_cast<unsigned char>(num[2]) << 8) | static_cast<unsigned char>(num[3]);
 	
 	return converted_num;
 }
 
-//get labels for images
+// This function gets the labels for images
 std::vector<std::vector<unsigned char>> read_labels(const std::string& file_name){
-	//open file as binary type
+	// Open file as binary type
 	std::ifstream file(file_name, std::ios::binary);
 	
 	char magicNum[4];
 	char imagesNum[4];
 
-	//read the numbers from the file
+	// Read the numbers from the file
 	file.read(magicNum, 4);
 	file.read(imagesNum, 4);
 	
-	//convert to little endian
+	// Convert to little endian
 	int num_converted = convert_endian(imagesNum);
 	
-	//vector to store the images and pixal values in
+	// Vector to store the images and pixal values in
 	std::vector<std::vector<unsigned char>> labels;
 	
-	//loop over all images
+	// Loop over all images
 	for(int i = 0; i < num_converted; ++i){
-		//create a vector to wholed the labels each label is 1 byte
+		// Create a vector to wholed the labels each label is 1 byte
 		std::vector<unsigned char> img(1);
 
-		//read label and add it to the vector
+		// Read label and add it to the vector
 		file.read((char*)(img.data()), 1);
 		labels.push_back(img);
 	}
 	
-	//close file
+	// Close file
 	file.close();
 
 	return labels;
-	
 }
 
-// outer vector has all the iamges, inner vector has all the the pixels per image(28 x 28)
+// Outer vector has all the images, inner vector has all of the pixels per image (28 x 28)
 std::vector<std::vector<unsigned char>> read_images(const std::string& file_name){
 	//open file as binary type
 	std::ifstream file(file_name, std::ios::binary);
@@ -95,15 +95,17 @@ std::vector<std::vector<unsigned char>> read_images(const std::string& file_name
 }
 
 int main(){
-	
-	std::vector<std::vector<unsigned char>> image = read_images("lib/images/train-images.idx3-ubyte");
-	std::vector<std::vector<unsigned char>> label = read_labels("lib/images/train-labels.idx1-ubyte");
+  try{	
+	std::vector<std::vector<unsigned char>> image = read_images("lib/images/t10k-images.idx3-ubyte");
+	std::vector<std::vector<unsigned char>> label = read_labels("lib/images/t10k-labels.idx1-ubyte");
+	fs::path base_path = fs::current_path() / "lib" / "images" / "testing_data";
 
-	// View the images
-	//cv::namedWindow("Image", cv::WINDOW_AUTOSIZE);
+	// Comment out the previous three lines, and uncomment these
+	// three lines below to create the training data images.
 
-	// Set file path
-	fs::path base_path = fs::current_path() / "lib" / "images" / "training_data";
+	// std::vector<std::vector<unsigned char>> image = read_images("lib/images/train-images.idx3-ubyte");
+	// std::vector<std::vector<unsigned char>> label = read_labels("lib/images/train-labels.idx1-ubyte");
+	// fs::path base_path = fs::current_path() / "lib" / "images" / "training_data";
 
 	if(!fs::exists(base_path)){
 		fs::create_directories(base_path);
@@ -111,53 +113,37 @@ int main(){
 
 	// Loop over images
 	for(size_t i = 0; i < image.size(); ++i){
-		
 		// Create a temp image
 		cv::Mat tmp = cv::Mat::zeros(cv::Size(28, 28), CV_8UC1);
-		
 		
 		// Make sure the image is of size 28 by 28
 		if(image[i].size() != 784){
 			std::cerr << "Image " << i << " does not have 784 pixels." << std::endl;
         		continue; // Skip this iteration if the image is not valid
 		}
-		
 	
 		// Variable to count the rows and cols
 		int row = 0;
 		int cols = 0;
 
-		//loop over pixels
+		// Loop over pixels
 		for(size_t j = 0; j < image[i].size(); ++j){
-
-			//write image data to the tmp image
+			// Write image data to the tmp image
 			int row = j / 28;
 			int col = j % 28;
 			tmp.at<uchar>(cv::Point(col, row)) = static_cast<uchar>(image[i][j]);
-
-			/*
-			//increament colume counter
-			++cols;
-			//to keep track of rows
-			if(j%28 == 0 && j != 0){
-				++row;
-				//at the end of an image reset the colume counter
-				cols = 0;
-			}	*/
 		}
 		
 		std::string label_str = std::to_string(static_cast<int>(label[i][0]));
-
 		std::string filename = label_str + "_t" + std::to_string(i + 1) + ".pgm";
-
 		fs::path full_path = base_path / filename;
-
 		cv::imwrite(full_path.string(), tmp);
-
-//		std::cout<< "Label: " << (int)label[i][0]<<std::endl; 
-//		cv::imshow("image", tmp);
-//		cv::waitKey(0);		
 	}	
 	
+        } catch(const std::exception& e) {
+                std::cerr << e.what() << std::endl;
+                return -1;
+        } catch(...){ return -1; }
+
 	return 0;
 }

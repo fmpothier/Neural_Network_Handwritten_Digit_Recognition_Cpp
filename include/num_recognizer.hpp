@@ -4,7 +4,6 @@
 #include <stdexcept>
 #include <vector>
 #include <Eigen/Dense>
-#include <iostream>
 
 namespace ann{
 
@@ -76,6 +75,8 @@ namespace ann{
 			return output;
 		}
 
+		// This function reads the errors propagated from calculate_error, and 
+		// calculates and writes the modified weights and biases.
 		void feed_backward(const double& learning_rate, const Vector& output, const Vector& expected){
 			std::vector<Vector> errors = calculate_error(output, expected);
 
@@ -88,6 +89,8 @@ namespace ann{
 			}
 		}
 	
+		// This function calculates the error between the expected output layer and the 
+		// actual output layer.
 		std::vector<Vector> calculate_error(const Vector& output, const Vector& expected){
 			std::vector<Vector> errors(weights_.size());
 
@@ -105,10 +108,6 @@ namespace ann{
 			return errors;			
 		}
 
-		//returns the current activations in the NN
-		//this might be unnescessary as i don't think we have to save the
-		// activations but we might want to for understating what it happen in are NN
-		// but it dose make extra work that we dont really need to do
 		const std::vector<Vector>& get_activations() const{
 			return activations_;
 		}
@@ -123,12 +122,10 @@ namespace ann{
 			biases_ = biases;
 		}
 
-		//retruns the vector with the current matrix of weights on it
 		const std::vector<Matrix>& get_weights() const{
 			return weights_;
 		}
 		
-		//retunrs the Vector with the current vectors of biases
 		const std::vector<Vector>& get_biases() const{
 			return biases_;
 		}
