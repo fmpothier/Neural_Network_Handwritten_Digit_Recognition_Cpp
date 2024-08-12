@@ -96,14 +96,14 @@ std::vector<std::vector<unsigned char>> read_images(const std::string& file_name
 
 int main(){
 	
-	std::vector<std::vector<unsigned char>> image = read_images("images/train-images.idx3-ubyte");	
-	std::vector<std::vector<unsigned char>> label = read_labels("images/train-labels.idx1-ubyte");
+	std::vector<std::vector<unsigned char>> image = read_images("lib/images/train-images.idx3-ubyte");	
+	std::vector<std::vector<unsigned char>> label = read_labels("lib/images/train-labels.idx1-ubyte");
 
 	// View the images
 	//cv::namedWindow("Image", cv::WINDOW_AUTOSIZE);
 
 	// Set file path
-	fs::path base_path = fs::current_path() / "images" / "training_data";
+	fs::path base_path = fs::current_path() / "lib" / "images" / "training_data";
 
 	if(!fs::exists(base_path)){
 		fs::create_directories(base_path);

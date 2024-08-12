@@ -20,7 +20,7 @@ namespace ann{
 		// Weight matrix: number of rows = size of output vector.
 		// Number of columns = size of input vector.
 		// The bias vectors are size of the length of the prev layer.
-		neural_network(const std::vector<size_type>& layers) : layers_(layers){
+		neural_network(const std::vector<size_type>& layers) : layers_(layers) {
 
 			// Gets the amount of layers in the NN.
 			const size_type num_layers = layers.size();
@@ -31,6 +31,10 @@ namespace ann{
 				biases_.push_back(Vector::Random(layers.at(i+1)));
 			} 
 		}
+
+		neural_network(const std::vector<size_type>& layers, const std::vector<Matrix>& W,
+		 const std::vector<Vector>& b) : layers_(layers), weights_(W), biases_(b) {}
+
 		
 		// The sigmoid function takes in a vector 
 		// and maps the values to an range between 0 and 1.
@@ -56,17 +60,17 @@ namespace ann{
 
 			// Clear old activations so that we can replace with new 
 			// activations for each level of the NN
-			activations_.clear();
+//			activations_.clear();
 
 			//first layer of activations 
-			activations_.push_back(input);
+//			activations_.push_back(input);
 
 			// This variable will hold our vector of node activations for forward
 			// propagation.
 			Vector cur_layer = input;
 			for(size_type index = 0; index < weights_.size(); ++index){	
 				cur_layer = sigmoid((weights_.at(index)*cur_layer) + biases_.at(index));
-				activations_.push_back(cur_layer);
+//				activations_.push_back(cur_layer);
 			}
 			output = cur_layer;
 			return output;
@@ -76,10 +80,10 @@ namespace ann{
 		//this might be unnescessary as i don't think we have to save the
 		// activations but we might want to for understating what it happen in are NN
 		// but it dose make extra work that we dont really need to do
-		const std::vector<Vector>& get_activations() const{
+/*		const std::vector<Vector>& get_activations() const{
 			return activations_;
 		}
-		
+*/		
 		//retruns the vector with the current matrix of weights on it
 		const std::vector<Matrix>& get_weights() const{
 			return weights_;
@@ -96,7 +100,7 @@ namespace ann{
 		std::vector<Vector> biases_;
 		
 		//might not be nescessary
-		std::vector<Vector> activations_;
+//		std::vector<Vector> activations_;
 	};
 }
 
