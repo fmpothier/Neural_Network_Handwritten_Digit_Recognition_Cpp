@@ -96,7 +96,7 @@ std::vector<std::vector<unsigned char>> read_images(const std::string& file_name
 
 int main(){
 	
-	std::vector<std::vector<unsigned char>> image = read_images("lib/images/train-images.idx3-ubyte");	
+	std::vector<std::vector<unsigned char>> image = read_images("lib/images/train-images.idx3-ubyte");
 	std::vector<std::vector<unsigned char>> label = read_labels("lib/images/train-labels.idx1-ubyte");
 
 	// View the images

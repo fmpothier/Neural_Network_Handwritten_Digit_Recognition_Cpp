@@ -1,9 +1,12 @@
 #include "num_recognizer.hpp"
+#include "ann_trainer.hpp"
 #include <opencv2/opencv.hpp>
 #include <fstream>
+#include <filesystem>
 #include <iostream>
 
 using namespace ann;
+namespace fs = std::filesystem;
 
 int main(int argc, char** argv){
 
@@ -38,8 +41,16 @@ int main(int argc, char** argv){
 	input = input.transpose();
 	input = input / 255.0;
 
+	fs::path base_path = fs::current_path() / "lib";
+        fs::path weight_path = base_path / "weights.bin";
+        fs::path bias_path = base_path / "biases.bin";
+
+	std::vector<neural_network::Matrix> weights = read_weights(weight_path);
+	std::vector<neural_network::Vector> biases = read_biases(bias_path);
+
 	const std::vector<std::size_t> layers{784, 512, 256, 128, 10};
-	neural_network NN(layers);
+	neural_network NN(layers, weights, biases);
+
 	neural_network::Vector output = NN.feed_forward(input);
 	Eigen::Index digit;
 	double maxActivation = output.maxCoeff(&digit);

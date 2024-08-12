@@ -60,30 +60,69 @@ namespace ann{
 
 			// Clear old activations so that we can replace with new 
 			// activations for each level of the NN
-//			activations_.clear();
+			activations_.clear();
 
 			//first layer of activations 
-//			activations_.push_back(input);
+			activations_.push_back(input);
 
 			// This variable will hold our vector of node activations for forward
 			// propagation.
 			Vector cur_layer = input;
 			for(size_type index = 0; index < weights_.size(); ++index){	
 				cur_layer = sigmoid((weights_.at(index)*cur_layer) + biases_.at(index));
-//				activations_.push_back(cur_layer);
+				activations_.push_back(cur_layer);
 			}
 			output = cur_layer;
 			return output;
 		}
+
+		void feed_backward(const double& learning_rate, const Vector& output, const Vector& expected){
+			std::vector<Vector> errors = calculate_error(output, expected);
+
+			for(size_type layer = 0; layer < weights_.size(); ++layer){
+				Matrix dW = errors[layer] * activations_[layer].transpose();
+				Vector dB = errors[layer];
+
+				weights_[layer] -= learning_rate * dW;
+				biases_[layer] -= learning_rate * dB;
+			}
+		}
 	
+		std::vector<Vector> calculate_error(const Vector& output, const Vector& expected){
+			std::vector<Vector> errors(weights_.size());
+
+			Vector delta = (output - expected).array() * output.array() * (1-output.array());
+			errors.back() = delta;
+
+			for(size_type layer = weights_.size() - 1; layer > 0; --layer){
+				const Matrix& current_weights = weights_[layer];
+				const Vector& current_activations = activations_[layer];
+				delta = (current_weights.transpose() * delta).array() *
+				 current_activations.array() * (1-current_activations.array());
+				errors[layer - 1] = delta;
+			}
+
+			return errors;			
+		}
+
 		//returns the current activations in the NN
 		//this might be unnescessary as i don't think we have to save the
 		// activations but we might want to for understating what it happen in are NN
 		// but it dose make extra work that we dont really need to do
-/*		const std::vector<Vector>& get_activations() const{
+		const std::vector<Vector>& get_activations() const{
 			return activations_;
 		}
-*/		
+		
+		void set_weights(const std::vector<Matrix>& weights){
+			weights_.clear();
+			weights_ = weights;
+		}		
+
+		void set_biases(const std::vector<Vector>& biases){
+			biases_.clear();
+			biases_ = biases;
+		}
+
 		//retruns the vector with the current matrix of weights on it
 		const std::vector<Matrix>& get_weights() const{
 			return weights_;
@@ -94,13 +133,12 @@ namespace ann{
 			return biases_;
 		}
 
+
 	private:
 		std::vector<size_type> layers_;
 		std::vector<Matrix> weights_;
 		std::vector<Vector> biases_;
-		
-		//might not be nescessary
-//		std::vector<Vector> activations_;
+		std::vector<Vector> activations_;
 	};
 }
 

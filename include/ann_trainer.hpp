@@ -9,9 +9,6 @@ namespace ann{
 	using Vector = neural_network::Vector;
 	using Matrix = neural_network::Matrix; 
 	
-	//maybe takens in the label for the image we are looking at?
-	void propagate_backward();
-
 	bool write_binary(const std::vector<Matrix>& W, const std::vector<Vector>& b,
 	 const std::string& weights_path, const std::string& biases_path){
 
