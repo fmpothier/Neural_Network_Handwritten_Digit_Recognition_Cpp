@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# Define the installation directory and testing data directory
+INSTALL_DIR="$(dirname "$(dirname "$(readlink -f "$0")")")"
+TESTING_DATA_DIR="$INSTALL_DIR/lib/images/testing_data"
+
+# Check if the testing_data directory exists, if not, run convert_images
+if [ ! -d "$TESTING_DATA_DIR" ]; then
+    echo "Testing data directory does not exist. Generating testing data..."
+    cd "$INSTALL_DIR"
+    ./bin/convert_images
+else
+    echo "Testing data directory already exists. Skipping image generation..."
+fi
+
+# Find a random image file in the testing_data directory
+IMAGE_FILE=$(find "$TESTING_DATA_DIR" -type f -name "*.pgm" -o -name "*.pnm" -o -name "*.jpg" -o -name "*.png" | shuf -n 1)
+
+if [ -z "$IMAGE_FILE" ]; then
+    echo "No image files found in the testing data directory."
+    exit 1
+fi
+
+# Run num_recognizer on the selected image file
+echo "Running num_recognizer on $IMAGE_FILE..."
+cd "$INSTALL_DIR"
+./bin/num_recognizer "$IMAGE_FILE"
+
+# Display the selected image
+echo "Displaying the image: $IMAGE_FILE"
+display "$IMAGE_FILE"
+
+exit 0
