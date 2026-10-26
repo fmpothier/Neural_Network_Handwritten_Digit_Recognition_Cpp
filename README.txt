@@ -1,4 +1,4 @@
-# Handwritten Digit Recognition: Neural Network in C++
+#Handwritten Digit Recognition: Neural Network in C++
 
 **Frankie Pothier and David McGowan**
 **SENG 475 (Advanced C++), University of Victoria, Summer 2024**
@@ -7,7 +7,7 @@ A fully connected neural network built from scratch in C++17 to recognize handwr
 
 **Demo video:** https://youtu.be/V7O3W7zgCZwLet 
 
-## Getting Started
+##Getting Started
 The instructions below explain how to build, install, and run the program, including the demo, digit recognition, accuracy testing, and retraining the network.
 
 $TOP_DIR denote the directory containing this README file.
