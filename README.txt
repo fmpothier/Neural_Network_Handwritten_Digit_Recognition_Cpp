@@ -1,6 +1,17 @@
-README
+# Handwritten Digit Recognition: Neural Network in C++
 
-Let $TOP_DIR denote the directory containing this README file.
+**Frankie Pothier and David McGowan**
+**SENG 475 (Advanced C++), University of Victoria, Summer 2024**
+
+A fully connected neural network built from scratch in C++17 to recognize handwritten digits from the MNIST dataset. No machine-learning frameworks were used. Forward propagation, backpropagation, and gradient descent are implemented by hand, with Eigen for the linear algebra and OpenCV for image handling. 
+
+**Demo video:** https://youtu.be/V7O3W7zgCZwLet 
+
+## Getting Started
+The instructions below explain how to build, install, and run the program, including the demo, digit recognition, accuracy testing, and retraining the network.
+
+$TOP_DIR denote the directory containing this README file.
+
 Let $INSTALL_DIR denote the directory into which this software is to be installed.
 
 To build and install the software, use the following commands:
